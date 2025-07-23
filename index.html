@@ -1,0 +1,117 @@
+<!-- File: index.html (All-in-One - Login/Register/Admin/User) -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Free Fire Tournament</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; background: #f0f0f0; }
+    .container { padding: 20px; max-width: 500px; margin: auto; }
+    .section { display: none; background: white; padding: 20px; border-radius: 10px; margin-top: 20px; }
+    nav { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid #ccc; display: flex; justify-content: space-around; padding: 10px; }
+    nav button { background: none; border: none; font-size: 16px; }
+    input, textarea { width: 100%; padding: 8px; margin: 5px 0; }
+    button.action { background: #007bff; color: white; padding: 10px; margin-top: 10px; width: 100%; border: none; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div id="login" class="section" style="display:block;">
+    <h2>Login</h2>
+    <input type="email" id="loginEmail" placeholder="Email">
+    <input type="password" id="loginPassword" placeholder="Password">
+    <button class="action" onclick="login()">Login</button>
+    <p>Don't have an account? <a href="#" onclick="showSection('register')">Register</a></p>
+  </div>
+  <div id="register" class="section">
+    <h2>Register</h2>
+    <input type="email" id="registerEmail" placeholder="Email">
+    <input type="password" id="registerPassword" placeholder="Password">
+    <button class="action" onclick="register()">Register</button>
+    <p>Already have an account? <a href="#" onclick="showSection('login')">Login</a></p>
+  </div>
+  <div id="userPanel" class="section">
+    <h2>User Panel</h2>
+    <p>Balance: ৳<span id="balance">0</span></p>
+    <div id="userContent">Welcome User</div>
+    <nav>
+      <button onclick="loadUserContent('home')">🏠</button>
+      <button onclick="loadUserContent('wallet')">💳</button>
+      <button onclick="loadUserContent('history')">📜</button>
+      <button onclick="loadUserContent('profile')">👤</button>
+    </nav>
+  </div>
+  <div id="adminPanel" class="section">
+    <h2>Admin Panel</h2>
+    <input placeholder="Match Title">
+    <input placeholder="Match Logo URL">
+    <input type="datetime-local">
+    <input placeholder="Entry Fee">
+    <input placeholder="Player Limit">
+    <textarea placeholder="Description"></textarea>
+    <button class="action">Add Match</button>
+    <div style="margin-top:20px;">
+      <h3>Deposit Requests</h3>
+      <p>None</p>
+      <h3>Withdraw Requests</h3>
+      <p>None</p>
+      <h3>User List</h3>
+      <p>shakib@example.com <button style="color:red;">Block</button></p>
+    </div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyA4DKyv3GqCSO1WwXIWTL7a1doc7bhQMZY",
+    authDomain: "ff-tournament-c9dd2.firebaseapp.com",
+    projectId: "ff-tournament-c9dd2",
+    storageBucket: "ff-tournament-c9dd2.appspot.com",
+    messagingSenderId: "1055880025714",
+    appId: "1:1055880025714:web:b5438a3964c2b9a24d94eb"
+  };
+  const app = firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+
+  const ADMIN_EMAIL = "rezoan12345678@gmail.com";
+
+  function showSection(id) {
+    document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
+    document.getElementById(id).style.display = 'block';
+  }
+
+  function login() {
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+    auth.signInWithEmailAndPassword(email, password)
+      .then(() => {
+        if (email === ADMIN_EMAIL) {
+          showSection('adminPanel');
+        } else {
+          showSection('userPanel');
+        }
+      })
+      .catch(err => alert(err.message));
+  }
+
+  function register() {
+    const email = document.getElementById('registerEmail').value;
+    const password = document.getElementById('registerPassword').value;
+    auth.createUserWithEmailAndPassword(email, password)
+      .then(() => alert("Registration Success"))
+      .catch(err => alert(err.message));
+  }
+
+  function loadUserContent(tab) {
+    const content = document.getElementById("userContent");
+    if (tab === 'home') content.innerHTML = '<h3>🏠 Home</h3><p>No matches yet.</p>';
+    if (tab === 'wallet') content.innerHTML = '<h3>💳 Wallet</h3><p>Deposit / Withdraw Coming Soon</p>';
+    if (tab === 'history') content.innerHTML = '<h3>📜 History</h3><p>History will show here</p>';
+    if (tab === 'profile') content.innerHTML = '<h3>👤 Profile</h3><p>User info here</p>';
+  }
+</script>
+</body>
+</html>
